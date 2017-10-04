@@ -1,2 +1,1 @@
-TYPE=val
-./predict.sh
+TYPE=val ./predict.sh

@@ -1,2 +1,0 @@
-TYPE=test
-./predict.sh
