@@ -1,6 +1,8 @@
 # Readme
+# #TODO replace n_epoch!!!!!!!!
 
 This folder contains procedures to recreate BraTS 2017 submission of our team.
+
 
 ## Requirements
 
@@ -17,12 +19,6 @@ BRATS_PATH/val and testing part is located in BRATS_PATH/test
 
 Run `./recreate_brats2017 BRATS_PATH`
 
-Predictions are located at
+Predictions are located in folders `val_submission` and `test_submission`
 
-### All steps
-
-1. `cd complex`
-1. `./install_deep_pipe.sh`
-1. `./prepare_data.sh`
-2. `./build_configs.sh`
-1. Run `prepare_brats2017.sh BRATS_PATH`
+There is `clean.sh` script that clears all results.

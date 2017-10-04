@@ -1,0 +1,2 @@
+TYPE=val
+./predict.sh
