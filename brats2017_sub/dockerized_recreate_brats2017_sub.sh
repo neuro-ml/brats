@@ -1,4 +1,4 @@
-#/bin/bash
+#!/usr/bin/env bash
 BRATS_PATH=$1
 
 docker build -t recreate_brats2017_sub . 
@@ -8,4 +8,4 @@ nvidia-docker run --rm \
 	--workdir /main/ \
 	--user $UID \
 	recreate_brats2017_sub \
-	/bin/bash recreate_brats2017_sub.sh
+	/bin/bash recreate_brats2017_sub.sh /data

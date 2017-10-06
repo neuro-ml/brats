@@ -19,3 +19,4 @@ RUN pip install pandas==0.20.3
 RUN pip install matplotlib==2.0.2
 RUN pip install tensorflow-gpu==1.2.1
 RUN pip install snakemake==3.13.3
+RUN pip install tqdm==4.14.0
