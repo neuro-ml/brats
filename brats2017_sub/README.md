@@ -19,7 +19,7 @@ Assuming that BRATS_PATH is a path to the dataset, we require the following stru
 ### Requirements
 
 1. Python 3.6 and bash command `python` runs python3.6
-2. The requirements from [deep_pipe](https://github.com/neuro-ml/deep_pipe/blob/ef2bce0d81b95e1f5a22d3b013358d18f5d5fc96/requirements.txt)
+2. The requirements from [deep_pipe](https://github.com/neuro-ml/deep_pipe/blob/87c1d6814cd2172375288deb17c077f17678f76d/requirements.txt)
 
 ### How to recreate
 
