@@ -1,3 +1,5 @@
-git clone --recursive https://github.com/neuro-ml/deep_pipe.git ../deep_pipe
+git clone https://github.com/neuro-ml/deep_pipe.git ../deep_pipe
 cd ../deep_pipe
-git checkout 87c1d6814cd2172375288deb17c077f17678f76d
+git checkout 748a2d43d88e32ffb820e1ace06472a8afc42d2a
+git submodule init
+git submodule update --recursive
