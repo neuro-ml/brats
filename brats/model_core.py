@@ -1,22 +1,31 @@
 import torch.nn as nn
 
-from dpipe.model_core.layers_torch.blocks import ConvBlock3d
-
-conv_block = ConvBlock3d
+from brats.layers import compose_blocks, SplitCat
 
 
-class SimpleNet(nn.Module):
-    def __init__(self, n_chans_in, n_chans_out, activation, structure):
-        super().__init__()
+def check_structure(structure):
+    assert all([len(level) == 3 for level in structure[:-1]])
+    assert len(structure[-1]) == 2
 
-        structure = [n_chans_in, *structure]
-        kernel_size = 3
+    for i, line in enumerate(structure):
+        assert len(line[0]) > 0
+        line[1] = [line[0][-1], *line[1]]
+        if i != len(structure) - 1:
+            assert line[1][-1] + structure[i + 1][-1][-1] == line[2][0]
 
-        path = [conv_block(n_chans_in=a, n_chans_out=b, activation=activation, kernel_size=kernel_size)
-                for a, b in zip(structure[:-1], structure[1:])]
 
-        self.path = nn.Sequential(*path,
-                                  conv_block(n_chans_in=structure[-1], n_chans_out=n_chans_out, kernel_size=1))
+def _build_tnet(structure, cb, up, down):
+    line, *down_structure = structure
+    if len(down_structure) == 0:
+        return nn.Sequential(down(), compose_blocks(sum(line, []), cb), up())
+    else:
+        down_path = build_tnet(down_structure, cb, up, down)
+        inner_path = compose_blocks([line[0][-1], *line[1]], cb)
+        return nn.Sequential(compose_blocks(line[0], cb),
+                             SplitCat(down_path, inner_path),
+                             compose_blocks(line[2], cb))
 
-    def forward(self, x):
-        return self.path(x)
+
+def build_tnet(structure, cb, up, down):
+    check_structure(structure)
+    return _build_tnet(structure, cb, up, down)
