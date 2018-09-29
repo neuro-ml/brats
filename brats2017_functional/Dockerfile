@@ -1,5 +1,5 @@
 FROM debian:stretch
-# ENV LAST_UPDATED 21-07-2017
+ENV LAST_UPDATED 29-09-2018
 RUN apt-get update && apt-get install -y \
 	git \
 	wget \
@@ -13,11 +13,16 @@ RUN rm ./Miniconda3-latest-Linux-x86_64.sh
 ENV PATH "/app":"/miniconda3/bin:${PATH}":$PATH
 
 RUN conda install scipy==1.0.0 
-RUN conda install pytorch-cpu==0.3.0 -c pytorch
+RUN conda install pytorch==0.3.0 -c pytorch
 
 RUN pip install nibabel==2.1.0
 
 RUN mkdir app && git clone https://github.com/neuro-ml/deep_pipe.git /app/deep_pipe && cd /app/deep_pipe/ && git checkout 41da0997d21090e9e7ec348aacb037303590c451 && ln -s /app/deep_pipe/dpipe /miniconda3/lib/python3.6/site-packages
 
 COPY ./root/app /app
-COPY predict.py /app/
+COPY entrypoint.py /app/
+
+ENTRYPOINT ["python", "-W", "ignore",  "/app/entrypoint.py"]
+
+# How to run
+# docker run -v <input path>:/input <output path>:/output brats2017_old python /app/predict.py

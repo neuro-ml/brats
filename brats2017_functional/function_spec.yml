@@ -1,0 +1,26 @@
+version: 1.0
+inputs:
+  nifti_archive:
+    archetype:
+      name: "file"
+      version: 1.0
+    mapping:
+      archive: ["storage_path"]
+outputs:
+  nifti_archive:
+    archetype:
+      name: "file"
+      version: 1.0
+    mapping:
+      archive: ["storage_path"]
+doc:
+  en:
+    title: Brain glial tumor segmentation
+    short_description: This is an integration of segmentation algorithm for brain glial tumor.
+    description: >
+      This is an integration of segmentation algorithm for brain glial tumor with deep learning.
+  ru:
+    title: Сегментация глиом головного мозга
+    short_description: Это интеграция сегментации глиом головного мозга.
+    description: >
+      Это интеграция сегментации глиом головного мозга с помощью глубокого обучения.

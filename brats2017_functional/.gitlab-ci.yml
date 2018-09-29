@@ -1,0 +1,90 @@
+variables:
+  DOCKER_FILE: Dockerfile
+  COBRA_STAGING_ENDPOINT: https://staging.cobrain.io/hooks/function
+  COBRA_PROD_ENDPOINT: https://web.cobrain.io/hooks/function
+
+stages:
+  - prepare
+  - push_to_registry
+  - push_to_staging_cobra
+  - push_to_prod_cobra
+
+build_image:
+  stage: prepare
+  except:
+    - tags
+  script:
+    - docker build -f $DOCKER_FILE .
+
+build_tagged_image:
+  stage: prepare
+  only:
+    - tags
+  script:
+    - docker build -f $DOCKER_FILE -t registry.cobrain.io/functions/$CI_PROJECT_NAME:$CI_COMMIT_TAG .
+
+lint_function_spec:
+  stage: prepare
+  except:
+    - tags
+  script:
+    - env
+    - >
+        response=$(curl --verbose --write-out "\nHTTPSTATUS:%{http_code}" -X POST -d name=$CI_PROJECT_NAME -d ref=$CI_COMMIT_SHA $COBRA_STAGING_ENDPOINT -d dry_run=true);
+    - >
+        http_body=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g');
+    - >
+        http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://');
+    - >
+        if test ! $http_status = 200;
+        then
+          echo -e "\nCode: $http_status\n$http_body$";
+          exit 1;
+        fi;
+
+push_to_registry:
+  stage: push_to_registry
+  only:
+    - tags
+  script:
+    - docker push registry.cobrain.io/functions/$CI_PROJECT_NAME:$CI_COMMIT_TAG
+
+push_to_staging_cobra:
+  stage: push_to_staging_cobra
+  only:
+    - tags
+  script:
+    - env
+    - >
+        response=$(curl --verbose --write-out "\nHTTPSTATUS:%{http_code}" -X POST -d name=$CI_PROJECT_NAME -d ref=$CI_COMMIT_TAG $COBRA_STAGING_ENDPOINT);
+    - >
+        http_body=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g');
+    - >
+        http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://');
+    - >
+        if test ! $http_status = 200;
+        then
+          echo -e "\nCode: $http_status\n$http_body$";
+          exit 1;
+        fi;
+
+
+push_to_prod_cobra:
+  stage: push_to_prod_cobra
+  only:
+    - tags
+  script:
+    - env
+    - >
+        response=$(curl --verbose --write-out "\nHTTPSTATUS:%{http_code}" -X POST -d name=$CI_PROJECT_NAME -d ref=$CI_COMMIT_TAG $COBRA_PROD_ENDPOINT);
+    - >
+        http_body=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g');
+    - >
+        http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://');
+    - >
+        if test ! $http_status = 200;
+        then
+          echo -e "\nCode: $http_status\n$http_body$";
+          exit 1;
+        fi;
+  when: manual

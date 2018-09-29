@@ -11,13 +11,10 @@ from dpipe.torch.model import TorchFrozenModel
 from dpipe.model_core.deepmedic_els import DeepMedicEls
 from dpipe.batch_predict.patch_3d_fixed import Patch3DFixedPredictor
 
-
-identifier = '00000000'
 prefix = ''
 
-data_path = prefix + '/data'
-output_file = prefix + f'/data/results/tumor_{identifier}_class.nii.gz'
-#temp_path = prefix + 'tmp/'
+data_path = prefix + '/input'
+output_file = prefix + '/output/segm.nii.gz'
 
 models_path = prefix + '/app/models'
 
@@ -58,8 +55,8 @@ def predict(x, model_id):
 
 def save_result(y_proba):
     y_pred = np.argmax(y_proba, axis=0)
-    # That was the original mask
-    y_pred[y_pred == 3] = 4
+    # BraTS competition used this replacement
+    # y_pred[y_pred == 3] = 4
     y_pred = y_pred.astype(np.uint8)
     img = nib.Nifti1Image(y_pred, np.eye(4))
 
@@ -70,7 +67,6 @@ def save_result(y_proba):
 
 
 if __name__ == '__main__':
-    # Load
     x = load_input()
     x = preprocess(x)
 
