@@ -11,7 +11,7 @@ from dpipe.torch.model import TorchFrozenModel
 from dpipe.model_core.deepmedic_els import DeepMedicEls
 from dpipe.batch_predict.patch_3d_fixed import Patch3DFixedPredictor
 
-cuda = False
+cuda = True
 prefix = ''
 
 data_path = prefix + '/input'
