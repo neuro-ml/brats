@@ -11,6 +11,7 @@ from dpipe.torch.model import TorchFrozenModel
 from dpipe.model_core.deepmedic_els import DeepMedicEls
 from dpipe.batch_predict.patch_3d_fixed import Patch3DFixedPredictor
 
+cuda = False
 prefix = ''
 
 data_path = prefix + '/input'
@@ -35,7 +36,7 @@ def preprocess(x):
 
 def predict_inner(x, model_id):
     model = TorchFrozenModel(
-        DeepMedicEls(4, 4, downsample='avg', upsample='neighbour', activation=nn.functional.relu), cuda=False,
+        DeepMedicEls(4, 4, downsample='avg', upsample='neighbour', activation=nn.functional.relu), cuda=cuda,
         logits2pred=partial(nn.functional.softmax, dim=1), restore_model_path=join(models_path, f'model_{model_id}')
     )
 
@@ -70,6 +71,7 @@ if __name__ == '__main__':
     x = load_input()
     x = preprocess(x)
 
+    # Cant't remeber why, but use 0 and 6't model
     y_proba = np.mean([predict(x, i) for i in (0, 6)], axis=0) 
 
     save_result(y_proba)
